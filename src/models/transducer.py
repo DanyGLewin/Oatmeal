@@ -265,9 +265,6 @@ class Transducer:
             for arc in arcs_list:
                 combined_label += "{0} : {1} {2}\\n".format(arc.input.get_symbol(), get_output_str(arc.output),
                                                             arc.cost_vector)
-
-            combined_label += "\\n" * len(arcs_list)
-
             print("\"{0}\" -> \"{1}\" [label=\"{2}\"];".format(
                 state, state, combined_label), file=str_io, end="\n")
 
@@ -278,8 +275,6 @@ class Transducer:
             for arc in arcs_list:
                 combined_label += "{0} : {1} {2}\\n".format(arc.input.get_symbol(), get_output_str(arc.output),
                                                             arc.cost_vector)
-
-            combined_label += "\\n" * len(arcs_list)
 
             print("\"{0}\" -> \"{1}\" [label=\"{2}\"];".format(
                 state1, state2, combined_label), file=str_io, end="\n")

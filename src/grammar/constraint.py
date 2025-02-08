@@ -3,6 +3,7 @@ import logging
 import sys
 from itertools import permutations
 from random import randint, choice
+from typing import Any, Self
 
 from six import StringIO, with_metaclass
 
@@ -80,6 +81,10 @@ class Constraint(with_metaclass(ConstraintMetaClass)):
         constraint_class = Constraint.get_constraint_class_by_name(cls.get_constraint_name())
         return constraint_class([random_feature_bundle], feature_table)
 
+    @classmethod
+    def from_dict(cls, feature_table, config: dict[str, Any]) -> Self:
+        return cls(config["bundles"], feature_table)
+
     def get_transducer(self):
         constraint_key = str(self)
         if constraint_key in constraint_transducers:
@@ -148,6 +153,10 @@ class MaxConstraint(Constraint):
     @classmethod
     def get_constraint_name(cls):
         return "Max"
+
+    @classmethod
+    def from_dict(cls, feature_table, config: dict[str, Any]) -> Self:
+        return cls(config["bundles"], feature_table)
 
 
 class DepConstraint(Constraint):
@@ -349,6 +358,81 @@ class PhonotacticConstraint(Constraint):
         for i in range(settings.initial_number_of_bundles_in_phonotactic_constraint):
             bundles.append(FeatureBundle.generate_random(feature_table))
         return PhonotacticConstraint(bundles, feature_table)
+
+
+class TieredLocalConstraint(Constraint):
+    """
+    Represents a tier-based strictly 2-local (TSL-2) constraint
+    """
+
+    def __init__(self, bundles_list, tier, feature_table):
+        super(TieredLocalConstraint, self).__init__(bundles_list, True, feature_table)
+        if len(bundles_list) > 2:
+            raise ConstraintError(
+                "Received Tiered Local constraint with more than 2 feature bundles. Tiered constraints must be TSL-2.",
+                data=dict(bundles_list=bundles_list))
+        self.tier = FeatureBundle(tier, feature_table)
+
+    def _make_transducer(self):
+        segments = self.feature_table.get_segments()
+        transducer = Transducer(segments, name=str(self))
+
+        q0 = State("q0")
+        q1 = State("q1")
+
+        transducer.set_as_single_state(q0)
+        transducer.add_state(q1)
+        transducer.add_final_state(q1)
+
+        for state in [q0, q1]:
+            for segment in segments:
+                # If the segment is NOT on the tier, stay in the same state, add no cost
+                if not segment.has_feature_bundle(self.tier):
+                    transducer.add_arc(Arc(
+                        state,
+                        JOKER_SEGMENT,
+                        segment,
+                        CostVector([0]),
+                        state
+                    ))
+                # if the segment IS in the tier
+                else:
+                    next_state = q1 if segment.has_feature_bundle(self.feature_bundles[0]) else q0
+
+                    if state == q1 and segment.has_feature_bundle(self.feature_bundles[1]):
+                        cost = 1
+                    else:
+                        cost = 0
+
+                    transducer.add_arc(Arc(
+                        state,
+                        JOKER_SEGMENT,
+                        segment,
+                        CostVector([cost]),
+                        next_state
+                    ))
+        return transducer
+
+    @classmethod
+    def get_constraint_name(cls):
+        return "TieredLocal"
+
+    def get_encoding_length(self):
+        return 1 + sum([featureBundle.get_encoding_length() for featureBundle in self.feature_bundles]) + len(
+            self.feature_bundles) + 1
+
+    @classmethod
+    def generate_random(cls, feature_table):
+        bundles = [
+            FeatureBundle.generate_random(feature_table),
+            FeatureBundle.generate_random(feature_table),
+        ]
+        tier = feature_table.get_random_feature()
+        return cls(bundles, tier, feature_table)
+
+    @classmethod
+    def from_dict(cls, feature_table, config: dict[str, Any]) -> Self:
+        return cls(config["bundles"], config["tier"], feature_table)
 
 
 class HeadDepConstraint(Constraint):

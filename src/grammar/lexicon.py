@@ -152,8 +152,8 @@ class Lexicon:
 
     def __str__(self):
         if settings.log_lexicon_words:
-            return (f"Lexicon: {len(self.words)} words: {[str(word) for word in self.words]} "
-                    f"with {self._get_number_of_segments()} segments in total")
+            return (f"Lexicon with {len(self.words)} words: {[str(word) for word in self.words]} "
+                    f"and {self._get_number_of_segments()} segments in total")
         else:
             return f"Lexicon, number of words: {len(self.words)}, number of segments: {self._get_number_of_segments()}"
 

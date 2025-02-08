@@ -79,6 +79,7 @@ class ConstraintInsertionWeights(Weights):
     max: NonNegativeInt
     ident: NonNegativeInt
     phonotactic: NonNegativeInt
+    tiered: NonNegativeInt
 
 
 class OtmlConfiguration(Model, Singleton):
@@ -174,7 +175,7 @@ class OtmlConfiguration(Model, Singleton):
         if self.lexicon_mutation_weights.sum + self.constraint_set_mutation_weights.sum == 0:
             raise OtmlConfigurationError("Sum of mutation weights is zero")
 
-        if self.constraint_insertion_weights.sum == 0:
+        if self.constraint_insertion_weights.sum == 0 and self.constraint_set_mutation_weights.insert_constraint > 0:
             raise OtmlConfigurationError("Sum of insertion weights is zero")
         return self
 
@@ -203,6 +204,13 @@ class OtmlConfiguration(Model, Singleton):
             raise OtmlConfigurationError(
                 "Either neither or both of `lexicon_mutation_weights.change_segment` and `allow_candidates_with_changed_segments` must be positive",
             )
+        return self
+
+    @model_validator(mode="after")
+    def _validate_min_constraints_in_constraint_set(self):
+        if self.min_constraints_in_constraint_set < 1:
+            raise OtmlConfigurationError(
+                "Min constraint set size cannot be zero (because FAITH constraints always exist)")
         return self
 
 

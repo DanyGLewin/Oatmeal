@@ -106,6 +106,10 @@ class FeatureTable:
     def get_features(self) -> set[str]:
         return self._features.labels
 
+    def get_random_feature(self) -> dict[str, Any]:
+        feature_label = choice(list(self.get_features()))
+        return {feature_label: self.get_random_value(feature_label)}
+
     def get_random_value(self, feature: int) -> str:
         return choice(self._features[feature])
 

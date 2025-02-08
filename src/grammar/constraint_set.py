@@ -7,9 +7,10 @@ import logging
 import pickle
 from math import ceil, log
 from random import choice, randrange
+from typing import Any
 
 from src.exceptions import GrammarParseError
-from src.grammar.constraint import Constraint, _get_number_of_constraints
+from src.grammar.constraint import Constraint, _get_number_of_constraints, TieredLocalConstraint
 from src.grammar.constraint import MaxConstraint, DepConstraint, PhonotacticConstraint, IdentConstraint
 from src.models.otml_configuration import settings
 from src.models.transducer import Transducer
@@ -24,17 +25,18 @@ constraint_set_transducers = dict()
 
 
 class ConstraintSet:
-    def __init__(self, constraint_set_list, feature_table):
+    def __init__(self, constraint_set_list: list[dict[str, Any]], feature_table):
         self.feature_table = feature_table
         self.constraints: list[Constraint] = list()
+
+        constraint: dict[str, Any]
         for constraint in constraint_set_list:
             constraint_name = constraint["type"]
-            bundles_list = constraint["bundles"]
             if not constraint_name:
                 raise GrammarParseError("Missing 'type' key")
 
             constraint_class = Constraint.get_constraint_class_by_name(constraint_name)
-            self.constraints.append(constraint_class(bundles_list, feature_table))
+            self.constraints.append(constraint_class.from_dict(feature_table, constraint))
 
     def __str__(self):
         return f"Constraint Set: {CONSTRAINTS_DELIM.join([str(cons) for cons in self.constraints])}"
@@ -182,7 +184,8 @@ class ConstraintSet:
             (DepConstraint, settings.constraint_insertion_weights.dep),
             (MaxConstraint, settings.constraint_insertion_weights.max),
             (IdentConstraint, settings.constraint_insertion_weights.ident),
-            (PhonotacticConstraint, settings.constraint_insertion_weights.phonotactic)
+            (PhonotacticConstraint, settings.constraint_insertion_weights.phonotactic),
+            (TieredLocalConstraint, settings.constraint_insertion_weights.tiered)
         ]
 
         weighted_constraint_class_for_insert = get_weighted_list(mutation_weights_for_insert)

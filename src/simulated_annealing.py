@@ -73,8 +73,8 @@ class SimulatedAnnealing(object):
         self.before_loop()
 
         while (self.current_temperature > self.threshold) and (self.step != self.step_limitation):
-            if self.step % 100 == 0:
-                print(self.current_hypothesis.grammar)
+            if (settings.debug_logging_interval) and (self.step % settings.debug_logging_interval == 0):
+                print(f"{self._pretty_step_label()} - {self.current_hypothesis.grammar}")
             self.make_step()
 
         self._after_loop()
@@ -120,10 +120,7 @@ class SimulatedAnnealing(object):
         logger.info(settings)
         logger.info(self.current_hypothesis.grammar.feature_table)
         self.step_limitation = settings.steps_limitation
-        if self.step_limitation != sys.maxsize:
-            self.number_of_expected_steps = self.step_limitation
-        else:
-            self.number_of_expected_steps = self._calculate_num_of_steps()
+        self.number_of_expected_steps = min(self.step_limitation, self._calculate_num_of_steps())
 
         logger.info("Number of expected steps is: {:,}".format(self.number_of_expected_steps))
         self.current_hypothesis_energy = self.current_hypothesis.update_energy()
@@ -137,7 +134,7 @@ class SimulatedAnnealing(object):
         self.cooling_parameter = settings.cooling_factor
 
     def _check_for_intervals(self):
-        if not self.step % settings.debug_logging_interval:
+        if settings.debug_logging_interval and not (self.step % settings.debug_logging_interval):
             self._debug_interval()
         if not self.step % settings.clear_modules_caching_interval:
             self.clear_modules_caching()
@@ -252,6 +249,11 @@ class SimulatedAnnealing(object):
 
             logger.info(f"sum asizeof: {sum_asizeof} MB")
             logger.info(f"Memory usage: {self._get_memory_usage()} MB")
+
+    def _pretty_step_label(self):
+        padding_size = len(str(self.number_of_expected_steps))
+        current_step = f"{self.step:>{padding_size}}"
+        return f"{current_step}/{self.number_of_expected_steps}"
 
 
 def _pretty_runtime_str(run_time_in_seconds):
