@@ -1,0 +1,54 @@
+[
+  {
+    "type": "Faith",
+    "bundles": []
+  },
+  {
+    "type": "Ident",
+    "bundles": [
+      {
+        "lateral": "+"
+      }
+    ]
+  },
+  {
+    "type": "Ident",
+    "bundles": [
+      {
+        "lateral": "-"
+      }
+    ]
+  },
+  {
+    "type": "TieredLocal",
+    "bundles": [
+      {
+        "liquid": "+",
+        "lateral": "-"
+      },
+      {
+        "liquid": "+",
+        "lateral": "+"
+      }
+    ],
+    "tier": {
+      "cons": "+"
+    }
+  },
+  {
+    "type": "TieredLocal",
+    "bundles": [
+      {
+        "liquid": "+",
+        "lateral": "+"
+      },
+      {
+        "liquid": "+",
+        "lateral": "-"
+      }
+    ],
+    "tier": {
+      "cons": "+"
+    }
+  }
+]
