@@ -4,7 +4,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import logging
 from random import choice
 
-from six import iterkeys
+from six import iterkeys, StringIO
 
 from src.exceptions import GrammarParseError
 from src.exceptions import OtmlConfigurationError
@@ -66,3 +66,18 @@ class FeatureBundle:
 
     def __getitem__(self, item):
         return self.feature_dict[item]
+
+    # moved from constraint.py as-is, should probably be prettified
+    def pretty_string(self, force_parentheses=False):
+        str_io = StringIO()
+        if len(self.feature_dict) > 1 or force_parentheses:
+            print("[", file=str_io, end="")
+
+        for i_feature, feature in enumerate(sorted(self.get_keys())):  # sorted to avoid differences in
+            if i_feature != 0:  # implementations (esp between Py2 and # Py3) - tests
+                print(", ", file=str_io, end="")
+            print("{0}{1}".format(self[feature], feature), file=str_io, end="")
+
+        if len(self.feature_dict) > 1 or force_parentheses:
+            print("]", file=str_io, end="")
+        return str_io.getvalue()

@@ -110,13 +110,9 @@ class SimulatedAnnealing(object):
         self.start_time = time.time()
         self.previous_interval_time = self.start_time
         logger.info(f"Process Id: {process_id}")
-        if settings.random_seed:
-            seed = choice(range(1, 1000))
-            logger.info(f"Seed: {seed} - randomly selected")
-        else:
-            seed = settings.seed
-            logger.info(f"Seed: {seed} - specified")
-        random.seed(seed)
+        if not settings.seed:
+            settings.seed = choice(range(1, 1000))
+        random.seed(settings.seed)
         logger.info(settings)
         logger.info(self.current_hypothesis.grammar.feature_table)
         self.step_limitation = settings.steps_limitation

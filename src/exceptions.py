@@ -33,6 +33,9 @@ class UnknownFeatureError(FeatureParseError):
     pass
 
 
+class GrammarError(OtmlBaseException):
+    pass
+
 class GrammarParseError(OtmlBaseException):
     pass
 

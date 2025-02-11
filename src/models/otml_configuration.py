@@ -122,7 +122,6 @@ class OtmlConfiguration(Model, Singleton):
     clear_modules_caching_interval: int
     steps_limitation: int | float
 
-    random_seed: bool
     seed: int
 
     data_encoding_length_multiplier: int
@@ -183,8 +182,6 @@ class OtmlConfiguration(Model, Singleton):
     def _validate_not_implemented_features(self):
         for value in (
                 self.constraint_set_mutation_weights.augment_feature_bundle,
-                self.lexicon_mutation_weights.change_segment,
-                self.allow_candidates_with_changed_segments,
         ):
             if value:
                 raise NotImplementedError
@@ -200,7 +197,7 @@ class OtmlConfiguration(Model, Singleton):
 
     @model_validator(mode="after")
     def _validate_change_segment_has_logical_weight(self):  # the logic for these isn't actually implemented yet
-        if self.lexicon_mutation_weights.change_segment ^ self.allow_candidates_with_changed_segments:
+        if bool(self.lexicon_mutation_weights.change_segment) ^ self.allow_candidates_with_changed_segments:
             raise OtmlConfigurationError(
                 "Either neither or both of `lexicon_mutation_weights.change_segment` and `allow_candidates_with_changed_segments` must be positive",
             )

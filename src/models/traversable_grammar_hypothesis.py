@@ -124,4 +124,4 @@ class TraversableGrammarHypothesis:
         return TraversableGrammarHypothesis(grammar_copy, self.data)
 
     def __str__(self):
-        return "Hypothesis with energy: {0}".format(self.update_energy())
+        return "Hypothesis with energy {0}".format(self.update_energy())

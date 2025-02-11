@@ -7,6 +7,7 @@ from ast import literal_eval
 from math import log, ceil
 from random import choice, randint
 
+from src.exceptions import GrammarError
 from src.grammar.features.feature_table import FeatureTable, Segment, NULL_SEGMENT, JOKER_SEGMENT
 from src.models.otml_configuration import settings
 from src.models.transducer import CostVector, Arc, State, Transducer
@@ -147,12 +148,14 @@ class Lexicon:
         """
         input_words is either a list of words or a file than contains a list of words
         """
+        if len(words) == 0:
+            raise GrammarError("Lexicon must contain at least one word")
         self.words: list[Word] = [Word(word_string, feature_table) for word_string in words]
         self.feature_table: FeatureTable = feature_table
 
     def __str__(self):
         if settings.log_lexicon_words:
-            return (f"Lexicon with {len(self.words)} words: {[str(word) for word in self.words]} "
+            return (f"Lexicon (energy {self.get_encoding_length()}): {len(self.words)} words {[str(word) for word in self.words]} "
                     f"and {self._get_number_of_segments()} segments in total")
         else:
             return f"Lexicon, number of words: {len(self.words)}, number of segments: {self._get_number_of_segments()}"

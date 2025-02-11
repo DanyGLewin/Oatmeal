@@ -107,17 +107,13 @@ class Constraint(with_metaclass(ConstraintMetaClass)):
     def __str__(self):
         str_io = StringIO()
         print(f"{self.get_constraint_name()}[", file=str_io, end="")
-        for featureBundle in self.feature_bundles:
-            if len(self.feature_bundles) > 1:
-                print("[", file=str_io, end="")
-
-            for i_feature, feature in enumerate(sorted(featureBundle.get_keys())):  # sorted to avoid differences in
-                if i_feature != 0:  # implementations (esp between Py2 and
-                    print(", ", file=str_io, end="")  # Py3) - tests
-                print("{0}{1}".format(featureBundle[feature], feature), file=str_io, end="")
-
-            if len(self.feature_bundles) > 1:
-                print("]", file=str_io, end="")
+        multiple_bundles = len(self.feature_bundles) > 1
+        if multiple_bundles:
+            print("[", file=str_io, end="")
+        for bundle in self.feature_bundles:
+            print(bundle.pretty_string(force_parentheses=multiple_bundles), file=str_io, end="")
+        if multiple_bundles:
+            print("]", file=str_io, end="")
         print("]", file=str_io, end="")
         return str_io.getvalue()
 
@@ -433,6 +429,17 @@ class TieredLocalConstraint(Constraint):
     @classmethod
     def from_dict(cls, feature_table, config: dict[str, Any]) -> Self:
         return cls(config["bundles"], config["tier"], feature_table)
+
+    def __str__(self):
+        str_io = StringIO()
+        print(f"TieredLocal({self.tier.pretty_string()})", file=str_io, end="")
+        if len(self.feature_bundles) > 1:
+            print("[", file=str_io, end="")
+        for bundle in self.feature_bundles:
+            print(bundle.pretty_string(force_parentheses=True), file=str_io, end="")
+        if len(self.feature_bundles) > 1:
+            print("]", file=str_io, end="")
+        return str_io.getvalue()
 
 
 class HeadDepConstraint(Constraint):

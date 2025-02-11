@@ -37,7 +37,11 @@ def main(config_folder_path):
 
     print("Starting optimization")
     step, hypothesis = simulated_annealing.run()
-    print(f'Ran {step} steps. Final hypothesis: {hypothesis}')
+    print(f"Ran {step} steps with seed {settings.seed}.")
+    print(f"Finished with {hypothesis}")
+    print(f"  - {hypothesis.grammar.constraint_set}")
+    print(f"  - {hypothesis.grammar.lexicon}")
+
     print("Done")
 
 

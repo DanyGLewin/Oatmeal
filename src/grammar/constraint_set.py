@@ -39,7 +39,7 @@ class ConstraintSet:
             self.constraints.append(constraint_class.from_dict(feature_table, constraint))
 
     def __str__(self):
-        return f"Constraint Set: {CONSTRAINTS_DELIM.join([str(cons) for cons in self.constraints])}"
+        return f"Constraint Set (energy {self.get_encoding_length()}): {CONSTRAINTS_DELIM.join([str(cons) for cons in self.constraints])}"
 
     def __hash__(self):
         return hash(str(self))
