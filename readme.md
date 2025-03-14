@@ -12,7 +12,7 @@ python3 src/otml.py -c [PATH_TO_SIMULATION_FOLDER]
 
 For example, to run a simulation for 'blocking' interactions with $TSL_2$ constraints, run
 ```bash
-python3 src/otml.py -c simulations/dany/blocking
+python3 src/otml.py -c simulations/tiered-local/blocking
 ```
 
 ## Building Simulations
