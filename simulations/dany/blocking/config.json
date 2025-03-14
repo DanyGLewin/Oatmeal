@@ -1,9 +1,9 @@
 {
-  "simulation_name": "blocking",
+  "simulation_name": "transparency",
   "log_file_name": "out.log",
   "log_lexicon_words": "True",
   "corpus_duplication_factor": 1,
-  "allow_candidates_with_changed_segments": "True",
+  "allow_candidates_with_changed_segments": "False",
   "restriction_on_alphabet": "False",
   "max_constraints_in_constraint_set": "INF",
   "min_constraints_in_constraint_set": 1,
@@ -17,12 +17,12 @@
   "lexicon_mutation_weights": {
     "insert_segment": 1,
     "delete_segment": 1,
-    "change_segment": 1
+    "change_segment": 0
   },
   "constraint_set_mutation_weights": {
     "insert_constraint": 0,
     "remove_constraint": 0,
-    "demote_constraint": 3,
+    "demote_constraint": 2,
     "insert_feature_bundle_phonotactic_constraint": 0,
     "remove_feature_bundle_phonotactic_constraint": 0,
     "augment_feature_bundle": 0
@@ -35,12 +35,12 @@
     "tiered": 0
   },
   "initial_temp": 20,
-  "cooling_factor": 0.999,
+  "cooling_factor": 0.995,
   "threshold": "10**-4",
-  "debug_logging_interval": 100,
+  "debug_logging_interval": 400,
   "clear_modules_caching_interval": 50,
   "steps_limitation": "INF",
-  "seed": 1234,
+  "seed": 0,
   "data_encoding_length_multiplier": 1,
   "grammar_encoding_length_multiplier": 1
 }

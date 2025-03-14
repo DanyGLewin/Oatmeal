@@ -74,7 +74,7 @@ class SimulatedAnnealing(object):
 
         while (self.current_temperature > self.threshold) and (self.step != self.step_limitation):
             if (settings.debug_logging_interval) and (self.step % settings.debug_logging_interval == 0):
-                print(f"{self._pretty_step_label()} - {self.current_hypothesis.grammar}")
+                print(f"{self._pretty_step_label()} - ({self.current_hypothesis.combined_energy} energy) {self.current_hypothesis.grammar}")
             self.make_step()
 
         self._after_loop()
@@ -111,7 +111,7 @@ class SimulatedAnnealing(object):
         self.previous_interval_time = self.start_time
         logger.info(f"Process Id: {process_id}")
         if not settings.seed:
-            settings.seed = choice(range(1, 1000))
+            settings.seed = choice(range(1, 10000))
         random.seed(settings.seed)
         logger.info(settings)
         logger.info(self.current_hypothesis.grammar.feature_table)

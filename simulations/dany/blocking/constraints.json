@@ -4,18 +4,18 @@
     "bundles": []
   },
   {
-    "type": "Ident",
+    "type": "Dep",
     "bundles": [
       {
-        "lateral": "+"
+        "cons": "+"
       }
     ]
   },
   {
-    "type": "Ident",
+    "type": "Dep",
     "bundles": [
       {
-        "lateral": "-"
+        "cons": "-"
       }
     ]
   },
@@ -23,12 +23,12 @@
     "type": "TieredLocal",
     "bundles": [
       {
-        "liquid": "+",
-        "lateral": "-"
+        "sib": "+",
+        "ant": "-"
       },
       {
-        "liquid": "+",
-        "lateral": "+"
+        "sib": "+",
+        "ant": "+"
       }
     ],
     "tier": {
@@ -39,12 +39,12 @@
     "type": "TieredLocal",
     "bundles": [
       {
-        "liquid": "+",
-        "lateral": "+"
+        "sib": "+",
+        "ant": "+"
       },
       {
-        "liquid": "+",
-        "lateral": "-"
+        "sib": "+",
+        "ant": "-"
       }
     ],
     "tier": {
